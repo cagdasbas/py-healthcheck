@@ -16,7 +16,7 @@ def run_continuously():
 		run_once()
 		time.sleep(1)
 
-@py_healthcheck.periodic(service="my_service1", timeout=10)
+@healthcheck_python.periodic(service="my_service1", timeout=10)
 def run_once():
 	do_something()
 
@@ -26,7 +26,7 @@ class MyProcess(mp.Process):
 			self.do_the_thing_once()
 			time.sleep(1)
 
-	@py_healthcheck.periodic(service="MyProcessService", timeout=5)
+	@healthcheck_python.periodic(service="MyProcessService", timeout=5)
 	def do_the_thing_once(self):
 		self.do_something()
 ```
