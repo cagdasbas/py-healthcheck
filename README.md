@@ -8,8 +8,8 @@ or detailed statuses of all service with fetching
 ```http://<ip>:<port>/health?v```
 
 #### Usage
-Set ```PY_HEALTH_CHECK_PORT``` environment variable and add the appropriate decorator to your periodic functions 
-or class methods
+Set ```PY_HEALTH_CHECK_HOST``` and ```PY_HEALTH_CHECK_PORT``` environment variable and add the appropriate decorator 
+to your periodic functions or class methods
 ```python
 def run_continuously():
 	while continue_running:

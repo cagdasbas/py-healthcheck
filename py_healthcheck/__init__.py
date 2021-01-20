@@ -28,6 +28,7 @@ message_queue = Queue()
 process_queue = Queue(maxsize=1)
 status_queue = Queue(maxsize=1)
 
+HEALTH_CHECK_HOST = os.getenv("PY_HEALTH_CHECK_HOST", "8080")
 HEALTH_CHECK_PORT = os.getenv("PY_HEALTH_CHECK_PORT", "8080")
 
 if isinstance(HEALTH_CHECK_PORT, str) and \
@@ -37,7 +38,7 @@ if isinstance(HEALTH_CHECK_PORT, str) and \
 else:
 	HEALTH_CHECK_PORT = 8080
 
-api = HealthCheckApi(HEALTH_CHECK_PORT, status_queue, daemon=True)
+api = HealthCheckApi(HEALTH_CHECK_HOST, HEALTH_CHECK_PORT, status_queue, daemon=True)
 updater = HealthCheckUpdater(process_queue, status_queue, daemon=True)
 manager = HealthCheckManager(message_queue, process_queue, daemon=True)
 

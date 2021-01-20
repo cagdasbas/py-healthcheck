@@ -25,9 +25,10 @@ class HealthCheckApi(Process):
 	Creates a bottle instance and reports the health status
 	"""
 
-	def __init__(self, port, status_queue, daemon=False):
+	def __init__(self, host, port, status_queue, daemon=False):
 		super().__init__()
 
+		self._host = host
 		self._port = port
 		self._status_queue = status_queue
 		self.daemon = daemon
@@ -43,7 +44,7 @@ class HealthCheckApi(Process):
 		self.terminate()
 
 	def run(self):
-		bottle.run(self._app, host='0.0.0.0', port=self._port)
+		bottle.run(self._app, host=self._host, port=self._port)
 
 	@staticmethod
 	def _index():
