@@ -16,7 +16,7 @@ import functools
 import time
 
 import healthcheck_python.config as config
-from healthcheck_python.data.periodic_service import PeriodicService
+from healthcheck_python.service.periodic_service import PeriodicService
 from healthcheck_python.pipeline import start
 
 

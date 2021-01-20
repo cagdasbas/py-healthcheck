@@ -62,7 +62,7 @@ class HealthCheckApi(Process):
 		try:
 			status = self._status_queue.get(block=False, timeout=1)
 		except Empty:
-			status = {'status': False, 'data': {}}
+			status = {'status': False, 'services': {}}
 
 		if is_verbose:
 			return status

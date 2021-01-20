@@ -54,7 +54,7 @@ class HealthCheckUpdater(mp.Process):
 	@staticmethod
 	def parse_message(message):
 		"""
-		Parse incoming struct to create own copy of process data
+		Parse incoming struct to create own copy of process service
 		:param message: dict with pickled values. Each value has to be a instance of BaseService
 		:return: dict with object values
 		"""
@@ -85,6 +85,6 @@ class HealthCheckUpdater(mp.Process):
 		self._status_queue.put(
 			{
 				'status': status,
-				'data': {key: service.json() for key, service in self._processes.items()}
+				'services': {key: service.json() for key, service in self._processes.items()}
 			}
 		)

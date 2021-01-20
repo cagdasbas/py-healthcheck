@@ -12,28 +12,48 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-class BaseService:
+import time
+
+from healthcheck_python.service.base_service import BaseService
+
+
+class PeriodicService(BaseService):
 	"""
-	Base service template
-	All services has to implement this
+	Periodic Service
+	This service has to be updated periodically, otherwise it is marked as failed
 	"""
 
-	def __init__(self, name):
-		self.name = name
+	def __init__(self, name, timeout=10):
+		super().__init__(name)
+		self._timeout = timeout
+
+		self._last_start = None
+		self._last_end = None
+		self._timeout = None
+
+		self._status = False
 
 	def json(self):
 		"""
 		Returns all attributes as dict
 		:return: dict, all object attributes
 		"""
-		raise NotImplementedError()
+		return {
+			'status': self._status,
+			'last_start': self._last_start, 'last_end': self._last_end, 'timeout': self._timeout
+		}
 
 	def add_new_point(self, point):
 		"""
 		Add new function call
-		:param point: dict, new function call data
+		:param point: dict, new function call service
 		"""
-		raise NotImplementedError()
+		if point is None:
+			return
+
+		self._last_start = point['start_time']
+		self._last_end = point['end_time']
+		self._timeout = point['timeout']
 
 	def is_healthy(self, current_time=None):
 		"""
@@ -41,4 +61,10 @@ class BaseService:
 		:param current_time: time.time() object, Optional, check the status with specific time
 		:return: boolean, service status
 		"""
-		raise NotImplementedError()
+		if self._last_end is None:
+			return False
+		if current_time is None:
+			current_time = time.time()
+
+		self._status = current_time - self._last_end <= self._timeout
+		return self._status
