@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import json
 from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 
 import bottle
+
+from py_healthcheck.release import __version__
 
 
 class HealthCheckApi(Process):
@@ -48,7 +49,7 @@ class HealthCheckApi(Process):
 
 	@staticmethod
 	def _index():
-		return 'Hello there!'
+		return f"Hello there! I'm py-healthcheck v{__version__}"
 
 	def _health(self):
 		"""
@@ -64,6 +65,6 @@ class HealthCheckApi(Process):
 			status = {'status': False, 'data': {}}
 
 		if is_verbose:
-			return json.dumps(status)
+			return status
 
 		return str(status['status']).lower()

@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+from py_healthcheck.release import __version__, __author__
+
 
 def read_file(file_name):
 	"""Read file and return its contents."""
@@ -21,13 +23,13 @@ def read_requirements(file_name):
 
 setup(
 	name='py-healthcheck',
-	version='0.1.0',
+	version=__version__,
 	url='https://github.com/cagdasbas/py-healthcheck',
 	python_requires='>=3.6',
 	description='Health Check API for multi-thread python apps',
 	long_description=read_file('README.md'),
 	long_description_content_type="text/markdown",
-	author='Cagdas Bas',
+	author=__author__,
 	author_email='cagdasbs@gmail.com',
 	packages=find_packages("."),
 	include_package_data=True,
