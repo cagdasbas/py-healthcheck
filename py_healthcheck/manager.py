@@ -53,11 +53,7 @@ class HealthCheckManager(mp.Process):
 		functions start and end time and the timeout
 		"""
 		process_name = message['name']
-		start_time = message['start_time']
-		end_time = message['end_time']
-		timeout = message['timeout']
+		message.pop('name')
 
-		self.processes[process_name] = {
-			'latest_start': start_time, 'latest_end': end_time, 'timeout': timeout
-		}
+		self.processes[process_name] = message
 		self.process_queue.put(self.processes.copy())

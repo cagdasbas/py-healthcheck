@@ -60,7 +60,7 @@ class HealthCheckUpdater(mp.Process):
 		self.index += 1
 		status = True
 		for _, value in self._processes.items():
-			end_time = value['latest_end']
+			end_time = value['end_time']
 			timeout = value['timeout']
 			if call_time - end_time > timeout:
 				status = False
