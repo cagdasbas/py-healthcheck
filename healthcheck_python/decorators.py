@@ -15,8 +15,11 @@
 import functools
 import time
 
-import healthcheck_python
+import healthcheck_python.config as config
 from healthcheck_python.data.periodic_service import PeriodicService
+from healthcheck_python.pipeline import start
+
+start()
 
 
 def periodic(_func=None, *, service='unknown', timeout=5):
@@ -36,7 +39,7 @@ def periodic(_func=None, *, service='unknown', timeout=5):
 			start_time = time.time()
 			ret_val = func(*args, **kwargs)
 			end_time = time.time()
-			healthcheck_python.message_queue.put(
+			config.message_queue.put(
 				{
 					'type': PeriodicService, 'name': service,
 					'start_time': start_time, 'end_time': end_time, 'timeout': timeout

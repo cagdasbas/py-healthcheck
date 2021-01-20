@@ -12,6 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from healthcheck_python.decorators import periodic
+import os
+from multiprocessing import Queue
 
-__all__ = ['periodic']
+started = False
+host = os.getenv("PY_HEALTH_CHECK_HOST", "0.0.0.0")
+port = os.getenv("PY_HEALTH_CHECK_PORT", "8080")
+
+if isinstance(port, str) and port.isdecimal() and 1 < int(port) < 65535:
+	port = int(port)
+else:
+	port = 8080
+
+message_queue = Queue()
+process_queue = Queue(maxsize=1)
+status_queue = Queue(maxsize=1)

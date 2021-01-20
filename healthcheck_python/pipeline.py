@@ -12,6 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from healthcheck_python.decorators import periodic
+import healthcheck_python.config as config
+from healthcheck_python.api import HealthCheckApi
+from healthcheck_python.manager import HealthCheckManager
+from healthcheck_python.updater import HealthCheckUpdater
 
-__all__ = ['periodic']
+
+def start():
+	if config.started:
+		return
+
+	api = HealthCheckApi(config.host, config.port, config.status_queue, daemon=True)
+	updater = HealthCheckUpdater(config.process_queue, config.status_queue, daemon=True)
+	manager = HealthCheckManager(config.message_queue, config.process_queue, daemon=True)
+
+	api.start()
+	updater.start()
+	manager.start()
+	config.started = True
