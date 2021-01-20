@@ -28,7 +28,7 @@ message_queue = Queue()
 process_queue = Queue(maxsize=1)
 status_queue = Queue(maxsize=1)
 
-HEALTH_CHECK_HOST = os.getenv("PY_HEALTH_CHECK_HOST", "8080")
+HEALTH_CHECK_HOST = os.getenv("PY_HEALTH_CHECK_HOST", "0.0.0.0")
 HEALTH_CHECK_PORT = os.getenv("PY_HEALTH_CHECK_PORT", "8080")
 
 if isinstance(HEALTH_CHECK_PORT, str) and \
