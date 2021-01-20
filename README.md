@@ -41,4 +41,4 @@ $ curl http://localhost:8080/health?v
 
 ### TODO
 - [ ] Unit tests
-- [ ] Support different types of checks
+- [x] Support different types of checks
