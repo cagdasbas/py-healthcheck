@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-from py_healthcheck.release import __version__, __author__
+from healthcheck_python.release import __version__, __author__
 
 
 def read_file(file_name):
@@ -22,7 +22,7 @@ def read_requirements(file_name):
 
 
 setup(
-	name='py-healthcheck',
+	name='healthcheck-python',
 	version=__version__,
 	url='https://github.com/cagdasbas/py-healthcheck',
 	python_requires='>=3.6',

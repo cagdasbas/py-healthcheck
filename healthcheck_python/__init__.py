@@ -16,13 +16,12 @@ import logging
 import os
 from multiprocessing import Queue
 
-from py_healthcheck.api import HealthCheckApi
-from py_healthcheck.decorators import periodic
-from py_healthcheck.manager import HealthCheckManager
+from healthcheck_python.api import HealthCheckApi
+from healthcheck_python.decorators import periodic
+from healthcheck_python.manager import HealthCheckManager
+from healthcheck_python.updater import HealthCheckUpdater
 
 __all__ = ['periodic']
-
-from py_healthcheck.updater import HealthCheckUpdater
 
 message_queue = Queue()
 process_queue = Queue(maxsize=1)

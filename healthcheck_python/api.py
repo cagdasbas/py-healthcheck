@@ -17,7 +17,7 @@ from queue import Empty
 
 import bottle
 
-from py_healthcheck.release import __version__
+from healthcheck_python.release import __version__
 
 
 class HealthCheckApi(Process):
