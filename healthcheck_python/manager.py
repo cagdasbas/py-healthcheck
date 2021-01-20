@@ -11,8 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 import multiprocessing as mp
+import pickle
 import queue
 import time
 
@@ -53,7 +53,13 @@ class HealthCheckManager(mp.Process):
 		functions start and end time and the timeout
 		"""
 		process_name = message['name']
-		message.pop('name')
+		if process_name in self.processes.keys():
+			service = self.processes[process_name]
+		else:
+			process_type = message['type']
+			service = process_type(process_name)
 
-		self.processes[process_name] = message
-		self.process_queue.put(self.processes.copy())
+		service.add_new_point(message)
+		self.processes[process_name] = service
+
+		self.process_queue.put({key: pickle.dumps(value) for key, value in self.processes.items()})

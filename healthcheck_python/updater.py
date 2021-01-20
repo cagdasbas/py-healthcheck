@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import multiprocessing as mp
+import pickle
 import queue
 import time
 
@@ -40,7 +41,7 @@ class HealthCheckUpdater(mp.Process):
 				message = self._process_queue.get(block=False)
 				if message is None:
 					break
-				self._processes = message
+				self._processes = HealthCheckUpdater.parse_message(message)
 			except queue.Empty:
 				pass
 
@@ -49,6 +50,20 @@ class HealthCheckUpdater(mp.Process):
 
 	def __del__(self):
 		self.continue_running = False
+
+	@staticmethod
+	def parse_message(message):
+		"""
+		Parse incoming struct to create own copy of process data
+		:param message: dict with pickled values. Each value has to be a instance of BaseService
+		:return: dict with object values
+		"""
+		processes = {}
+		for key, pickled_value in message.items():
+			if isinstance(pickled_value, bytes):
+				service = pickle.loads(pickled_value)
+				processes[key] = service
+		return processes
 
 	def _check_health(self):
 		"""
@@ -59,12 +74,17 @@ class HealthCheckUpdater(mp.Process):
 		call_time = time.time()
 		self.index += 1
 		status = True
-		for _, value in self._processes.items():
-			end_time = value['end_time']
-			timeout = value['timeout']
-			if call_time - end_time > timeout:
+		for _, service in self._processes.items():
+			service_status = service.is_healthy(call_time)
+			if not service_status:
 				status = False
-				break
+
 		while not self._status_queue.empty():
 			self._status_queue.get()
-		self._status_queue.put({'status': status, 'data': self._processes})
+
+		self._status_queue.put(
+			{
+				'status': status,
+				'data': {key: service.json() for key, service in self._processes.items()}
+			}
+		)

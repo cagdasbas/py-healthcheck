@@ -16,6 +16,7 @@ import functools
 import time
 
 import healthcheck_python
+from healthcheck_python.data.periodic_service import PeriodicService
 
 
 def periodic(_func=None, *, service='unknown', timeout=5):
@@ -36,7 +37,10 @@ def periodic(_func=None, *, service='unknown', timeout=5):
 			ret_val = func(*args, **kwargs)
 			end_time = time.time()
 			healthcheck_python.message_queue.put(
-				{'name': service, 'start_time': start_time, 'end_time': end_time, 'timeout': timeout}
+				{
+					'type': PeriodicService, 'name': service,
+					'start_time': start_time, 'end_time': end_time, 'timeout': timeout
+				}
 			)
 			return ret_val
 
