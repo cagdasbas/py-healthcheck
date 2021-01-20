@@ -13,14 +13,15 @@
 #  limitations under the License.
 
 import healthcheck_python.config as config
-from healthcheck_python.api import HealthCheckApi
-from healthcheck_python.manager import HealthCheckManager
-from healthcheck_python.updater import HealthCheckUpdater
 
 
 def start():
 	if config.started:
 		return
+
+	from healthcheck_python.api import HealthCheckApi
+	from healthcheck_python.manager import HealthCheckManager
+	from healthcheck_python.updater import HealthCheckUpdater
 
 	api = HealthCheckApi(config.host, config.port, config.status_queue, daemon=True)
 	updater = HealthCheckUpdater(config.process_queue, config.status_queue, daemon=True)
