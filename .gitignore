@@ -1,0 +1,6 @@
+.pytest_cache
+.tox
+htmlcov
+venv
+.coverage
+coverage.xml
