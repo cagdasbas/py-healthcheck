@@ -14,6 +14,7 @@
 
 import time
 
+from healthcheck_python.circular_queue import CircularQueue
 from healthcheck_python.service.base_service import BaseService
 
 
@@ -33,6 +34,9 @@ class PeriodicService(BaseService):
 
 		self._status = False
 
+		self._fps = 0
+		self._queue = CircularQueue(50)
+
 	def json(self):
 		"""
 		Returns all attributes as dict
@@ -40,7 +44,8 @@ class PeriodicService(BaseService):
 		"""
 		return {
 			'status': self._status,
-			'last_start': self._last_start, 'last_end': self._last_end, 'timeout': self._timeout
+			'last_start': self._last_start, 'last_end': self._last_end, 'timeout': self._timeout,
+			'fps': self._fps
 		}
 
 	def add_new_point(self, point):
@@ -54,6 +59,7 @@ class PeriodicService(BaseService):
 		self._last_start = point['start_time']
 		self._last_end = point['end_time']
 		self._timeout = point['timeout']
+		self._queue.enqueue(self._last_end)
 
 	def is_healthy(self, current_time=None):
 		"""
@@ -65,6 +71,8 @@ class PeriodicService(BaseService):
 			return False
 		if current_time is None:
 			current_time = time.time()
+
+		self._fps = len(self._queue) / self._queue.diff_head_tail()
 
 		self._status = current_time - self._last_end <= self._timeout
 		return self._status
