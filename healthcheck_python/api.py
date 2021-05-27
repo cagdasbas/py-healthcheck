@@ -60,7 +60,7 @@ class HealthCheckApi(Process):
 		"""
 		is_verbose = 'v' in bottle.request.query.keys()
 		try:
-			status = self._status_queue.get(block=False, timeout=1)
+			status = self._status_queue.get(block=True, timeout=1)
 		except Empty:
 			status = {'status': False, 'services': {}}
 
