@@ -17,7 +17,6 @@ import time
 
 import healthcheck_python.config as config
 from healthcheck_python.service.periodic_service import PeriodicService
-from healthcheck_python.pipeline import start
 
 
 def periodic(_func=None, *, service='unknown', timeout=5):
@@ -30,7 +29,6 @@ def periodic(_func=None, *, service='unknown', timeout=5):
 	before marking the service down
 	:return: original return values of _func()
 	"""
-	start()
 
 	def wrapper(func):
 		@functools.wraps(func)

@@ -13,5 +13,8 @@
 #  limitations under the License.
 
 from healthcheck_python.decorators import periodic
+from healthcheck_python.pipeline import start
 
 __all__ = ['periodic']
+
+start()
