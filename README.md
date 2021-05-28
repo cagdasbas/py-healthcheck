@@ -1,5 +1,5 @@
-### A Health Check API Library for Multi Thread Python Apps
-This library adds a health check REST API to your multithread apps. 
+### A Health Check API Library for Multiprocessing Python Apps
+This library adds a health check REST API to your multiprocessing apps. 
 You can add decorators to your periodic running functions and library will track 
 the function calls. This library supports ```multiprocessing``` threads.
 You can fetch a single overall app status by fetching
