@@ -12,9 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 import multiprocessing as mp
-import pickle
 import queue
-import time
 
 from setproctitle import setproctitle
 
@@ -65,4 +63,5 @@ class HealthCheckManager(mp.Process):
 		service.add_new_point(message)
 		self.processes[process_name] = service
 
-		self.process_queue.put({key: pickle.dumps(value) for key, value in self.processes.items()})
+		self.process_queue.put(
+			{key: value.serialize() for key, value in self.processes.items()})

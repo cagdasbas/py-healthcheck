@@ -13,11 +13,12 @@
 #  limitations under the License.
 
 import multiprocessing as mp
-import pickle
 import queue
 import time
 
 from setproctitle import setproctitle
+
+from healthcheck_python.utils import class_for_name
 
 
 class HealthCheckUpdater(mp.Process):
@@ -62,10 +63,11 @@ class HealthCheckUpdater(mp.Process):
 		:return: dict with object values
 		"""
 		processes = {}
-		for key, pickled_value in message.items():
-			if isinstance(pickled_value, bytes):
-				service = pickle.loads(pickled_value)
-				processes[key] = service
+		for key, data in message.items():
+			service_class = class_for_name(data['class'])
+			data.pop('class')
+			new_service = service_class.parse_from_dict(data)
+			processes[key] = new_service
 		return processes
 
 	def _check_health(self):

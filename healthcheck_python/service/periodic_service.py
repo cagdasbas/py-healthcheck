@@ -48,6 +48,19 @@ class PeriodicService(BaseService):
 			'fps': self._fps
 		}
 
+	def serialize(self):
+		return dict(self.__dict__, **{'_queue': self._queue.__dict__, 'class': self.__class__.__name__})
+
+	@staticmethod
+	def parse_from_dict(_dict):
+		new_service = PeriodicService(_dict['name'])
+		new_queue = CircularQueue(_dict['_queue']['k'])
+		new_queue.__dict__ = _dict['_queue']
+		_dict.pop('_queue')
+		new_service.__dict__ = _dict
+		new_service._queue = new_queue
+		return new_service
+
 	def add_new_point(self, point):
 		"""
 		Add new function call
