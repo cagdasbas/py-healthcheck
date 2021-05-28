@@ -67,4 +67,4 @@ class HealthCheckApi(Process):
 		if is_verbose:
 			return status
 
-		return str(status['status']).lower()
+		return {'status': status['status']}
