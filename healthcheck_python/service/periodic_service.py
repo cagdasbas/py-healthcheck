@@ -74,7 +74,7 @@ class PeriodicService(BaseService):
 			self._timeout = point['timeout']
 		if point['start_time'] != 0:
 			self._last_start = point['start_time']
-			self._queue.enqueue(self._last_end)
+			self._queue.enqueue(self._last_end - self._last_start)
 
 	def is_healthy(self, current_time=None):
 		"""
@@ -87,7 +87,7 @@ class PeriodicService(BaseService):
 		if current_time is None:
 			current_time = time.time()
 
-		self._fps = len(self._queue) / self._queue.diff_head_tail()
+		self._fps = self._queue.mean_nonzero()
 
 		self._status = current_time - self._last_end <= self._timeout
 		return self._status

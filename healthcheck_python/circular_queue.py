@@ -11,8 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import logging
-import sys
 
 
 class CircularQueue:
@@ -45,28 +43,12 @@ class CircularQueue:
 			return self.k
 		return self.head + 1
 
-	def peek_tail(self):
+	def mean_nonzero(self) -> float:
 		"""
-		Get the data added earliest
-		:return: earliest added data
+		Find mean of nonzero objects
+		:return: mean float
 		"""
-		return self.queue[self.tail]
-
-	def peek_head(self):
-		"""
-		Get the data added earliest
-		:return: earliest added data
-		"""
-		return self.queue[self.head]
-
-	def diff_head_tail(self) -> float:
-		"""
-		Get the head and tail elements difference in time
-		:return: diff in seconds
-		"""
-		diff = sys.float_info.epsilon
-		if self.head == -1:
-			return diff
-		logging.info(
-			f"len {len(self)}, head: {self.queue[self.head]}, tail: {self.queue[self.tail]}, diff {self.queue[self.head] - self.queue[self.tail]}")
-		return self.queue[self.head] - self.queue[self.tail] + diff
+		if self.first_full:
+			return self.k / sum(self.queue)
+		else:
+			return (self.head - self.tail + 1) / sum(self.queue[self.tail:self.head + 1])
