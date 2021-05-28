@@ -36,13 +36,12 @@ class HealthCheckManager(mp.Process):
 		setproctitle(self.__class__.__name__)
 		while self.continue_running:
 			try:
-				message = self.message_queue.get(block=False)
+				message = self.message_queue.get(block=True, timeout=0.1)
 				if message is None:
 					break
-
-				self._process_message(message)
 			except queue.Empty:
-				time.sleep(0.1)
+				continue
+			self._process_message(message)
 
 	def __del__(self):
 		self.continue_running = False

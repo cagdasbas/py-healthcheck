@@ -42,7 +42,7 @@ class HealthCheckUpdater(mp.Process):
 		setproctitle(self.__class__.__name__)
 		while self.continue_running:
 			try:
-				message = self._process_queue.get(block=False)
+				message = self._process_queue.get(block=True, timeout=0.1)
 				if message is None:
 					break
 				self._processes = HealthCheckUpdater.parse_message(message)
@@ -50,7 +50,6 @@ class HealthCheckUpdater(mp.Process):
 				pass
 
 			self._check_health()
-			time.sleep(0.5)
 
 	def __del__(self):
 		self.continue_running = False
