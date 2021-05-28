@@ -30,7 +30,7 @@ class PeriodicService(BaseService):
 
 		self._last_start = None
 		self._last_end = None
-		self._timeout = None
+		self._timeout = 999
 
 		self._status = False
 
@@ -56,10 +56,12 @@ class PeriodicService(BaseService):
 		if point is None:
 			return
 
-		self._last_start = point['start_time']
 		self._last_end = point['end_time']
-		self._timeout = point['timeout']
-		self._queue.enqueue(self._last_end)
+		if 'timeout' in point.keys():
+			self._timeout = point['timeout']
+		if point['start_time'] != 0:
+			self._last_start = point['start_time']
+			self._queue.enqueue(self._last_end)
 
 	def is_healthy(self, current_time=None):
 		"""

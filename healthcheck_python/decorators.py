@@ -19,14 +19,45 @@ import healthcheck_python.config as config
 from healthcheck_python.service.periodic_service import PeriodicService
 
 
-def periodic(_func=None, *, service='unknown', timeout=5):
+def periodic(_func=None, *, service='unknown', calc_fps=False, timeout=5):
 	"""
 	Periodic check decorator
 	Add this to your periodically called functions
 	:param _func: Wrapped function
 	:param service: Service name. This name will be reported with API call
+	:param calc_fps: Calculate fps on each run
 	:param timeout: The timeout in seconds needed between to consecutive _func() calls
 	before marking the service down
+	:return: original return values of _func()
+	"""
+
+	def wrapper(func):
+		@functools.wraps(func)
+		def wrapper_func(*args, **kwargs):
+			start_time = time.time() if calc_fps else 0
+			ret_val = func(*args, **kwargs)
+			end_time = time.time()
+			config.message_queue.put(
+				{
+					'type': PeriodicService, 'name': service,
+					'start_time': start_time, 'end_time': end_time, 'timeout': timeout
+				}
+			)
+			return ret_val
+
+		return wrapper_func
+
+	if _func is None:
+		return wrapper
+	return wrapper(_func)
+
+
+def fps(_func=None, *, service='unknown'):
+	"""
+	FPS Calculation decorator
+	Add this to your periodically called functions to calculate the fps
+	:param _func: Wrapped function
+	:param service: Service name
 	:return: original return values of _func()
 	"""
 
@@ -39,7 +70,7 @@ def periodic(_func=None, *, service='unknown', timeout=5):
 			config.message_queue.put(
 				{
 					'type': PeriodicService, 'name': service,
-					'start_time': start_time, 'end_time': end_time, 'timeout': timeout
+					'start_time': start_time, 'end_time': end_time
 				}
 			)
 			return ret_val
