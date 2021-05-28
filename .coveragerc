@@ -1,0 +1,8 @@
+[run]
+relative_files = True
+
+[report]
+show_missing = True
+omit = setup.py,
+	out_test_*.py,
+	healthcheck_python/service/base_service.py

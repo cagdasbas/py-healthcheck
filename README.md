@@ -34,11 +34,11 @@ With these wrappers, ```run_once()``` has to called every 10 seconds and ```MyPr
 has to be called every 5 seconds. If at least one fails, the app status will be down.
 ```shell
 $ curl http://localhost:8080/health
-true
+{"status": true}
 $ curl http://localhost:8080/health?v
-{"status": true, "data": {"my_service1": {"latest_start": 1611137135.3203568, "latest_end": 1611137135.3203998, "timeout": 10},"MyProcessService": {"latest_start": 1611137135.3203568, "latest_end": 1611137135.3203998, "timeout": 5}}}
+{"status": true, "services": {"my_service1": {"latest_start": 1611137135.3203568, "latest_end": 1611137135.3203998, "timeout": 10},"MyProcessService": {"latest_start": 1611137135.3203568, "latest_end": 1611137135.3203998, "timeout": 5}}}
 ```
 
 ### TODO
-- [ ] Unit tests
+- [x] Unit tests
 - [x] Support different types of checks

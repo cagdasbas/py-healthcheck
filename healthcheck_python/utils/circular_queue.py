@@ -44,6 +44,20 @@ class CircularQueue:
 			return self.k
 		return self.head + 1
 
+	def peek_tail(self):
+		"""
+		Get the data added earliest
+		:return: earliest added data
+		"""
+		return self.queue[self.tail]
+
+	def peek_head(self):
+		"""
+		Get the data added earliest
+		:return: earliest added data
+		"""
+		return self.queue[self.head]
+
 	def mean_nonzero(self) -> float:
 		"""
 		Find mean of nonzero objects
