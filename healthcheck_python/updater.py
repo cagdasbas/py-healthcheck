@@ -17,6 +17,8 @@ import pickle
 import queue
 import time
 
+from setproctitle import setproctitle
+
 
 class HealthCheckUpdater(mp.Process):
 	"""
@@ -36,6 +38,7 @@ class HealthCheckUpdater(mp.Process):
 		self.index = 0
 
 	def run(self):
+		setproctitle(self.__class__.__name__)
 		while self.continue_running:
 			try:
 				message = self._process_queue.get(block=False)

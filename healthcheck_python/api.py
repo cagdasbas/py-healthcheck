@@ -16,6 +16,7 @@ from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 
 import bottle
+from setproctitle import setproctitle
 
 from healthcheck_python.release import __version__
 
@@ -45,6 +46,7 @@ class HealthCheckApi(Process):
 		self.terminate()
 
 	def run(self):
+		setproctitle(self.__class__.__name__)
 		bottle.run(self._app, host=self._host, port=self._port)
 
 	@staticmethod
