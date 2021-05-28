@@ -14,7 +14,7 @@
 
 import time
 
-from healthcheck_python.circular_queue import CircularQueue
+from healthcheck_python.utils.circular_queue import CircularQueue
 from healthcheck_python.service.base_service import BaseService
 
 

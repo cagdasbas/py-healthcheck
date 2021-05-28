@@ -18,7 +18,7 @@ import time
 
 from setproctitle import setproctitle
 
-from healthcheck_python.utils import class_for_name
+from healthcheck_python.utils.utils import class_for_name
 
 
 class HealthCheckUpdater(mp.Process):
