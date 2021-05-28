@@ -11,7 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from unittest.mock import MagicMock
+
+import multiprocessing as mp
 
 import pytest
 
@@ -21,7 +22,7 @@ from healthcheck_python import config
 
 @pytest.fixture(scope='module')
 def queue():
-	return MagicMock()
+	return mp.Queue()
 
 
 def test_periodic_wo_fps(queue):
@@ -32,7 +33,7 @@ def test_periodic_wo_fps(queue):
 		x = 2 + 3
 
 	test_function()
-	call_args = queue.put.call_args.args[0]
+	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
 	assert call_args['start_time'] == 0
 	assert call_args['timeout'] == 1
@@ -47,7 +48,7 @@ def test_periodic_fps(queue):
 		x = 2 + 3
 
 	test_function()
-	call_args = queue.put.call_args.args[0]
+	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
 	assert call_args['start_time'] != 0
 	assert call_args['timeout'] == 1
@@ -61,6 +62,6 @@ def test_fps(queue):
 		x = 2 + 3
 
 	test_function()
-	call_args = queue.put.call_args.args[0]
+	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
 	assert call_args['start_time'] != 0

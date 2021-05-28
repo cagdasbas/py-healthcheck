@@ -31,7 +31,7 @@ def api_object(queue):
 
 
 def test_index(api_object):
-	assert api_object._index() == f"Hello there! I'm py-healthcheck v{__version__}"
+	assert api_object._index() == f"Hello there! I'm healthcheck-python v{__version__}"
 
 
 def test_failed_response(api_object):
