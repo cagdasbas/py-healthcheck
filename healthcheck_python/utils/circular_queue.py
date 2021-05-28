@@ -20,7 +20,7 @@ class CircularQueue:
 	only enqueues data and allow peeking the first added element
 	"""
 
-	def __init__(self, k):
+	def __init__(self, k: int):
 		self.k = k
 		self.queue = [0.0] * k
 		self.head = -1

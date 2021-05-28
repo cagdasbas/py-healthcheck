@@ -36,15 +36,16 @@ class HealthCheckUpdater(mp.Process):
 
 		self.continue_running = True
 		self._processes = {}
-		self.index = 0
 
 	def run(self):
 		setproctitle(self.__class__.__name__)
+
 		while self.continue_running:
 			try:
 				message = self._process_queue.get(block=True, timeout=0.1)
 				if message is None:
 					break
+
 				self._processes = HealthCheckUpdater.parse_message(message)
 			except queue.Empty:
 				pass
@@ -55,7 +56,7 @@ class HealthCheckUpdater(mp.Process):
 		self.continue_running = False
 
 	@staticmethod
-	def parse_message(message):
+	def parse_message(message) -> dict:
 		"""
 		Parse incoming struct to create own copy of process service
 		:param message: dict with pickled values. Each value has to be a instance of BaseService
@@ -76,7 +77,6 @@ class HealthCheckUpdater(mp.Process):
 		Free the status queue and put the latest status.
 		"""
 		call_time = time.time()
-		self.index += 1
 		status = True
 		for _, service in self._processes.items():
 			service_status = service.is_healthy(call_time)

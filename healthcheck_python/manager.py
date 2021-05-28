@@ -41,6 +41,7 @@ class HealthCheckManager(mp.Process):
 					break
 			except queue.Empty:
 				continue
+
 			self._process_message(message)
 
 	def __del__(self):
@@ -63,4 +64,5 @@ class HealthCheckManager(mp.Process):
 		self.processes[process_name] = service
 
 		self.process_queue.put(
-			{key: value.serialize() for key, value in self.processes.items()})
+			{key: value.serialize() for key, value in self.processes.items()}
+		)

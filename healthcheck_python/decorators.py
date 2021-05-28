@@ -39,18 +39,21 @@ def periodic(_func=None, *, service='unknown', calc_fps=False, timeout=5):
 			start_time = time.time() if calc_fps else 0
 			ret_val = func(*args, **kwargs)
 			end_time = time.time()
+
 			config.message_queue.put(
 				{
 					'type': PeriodicService, 'name': service,
 					'start_time': start_time, 'end_time': end_time, 'timeout': timeout
 				}
 			)
+
 			return ret_val
 
 		return wrapper_func
 
 	if _func is None:
 		return wrapper
+
 	return wrapper(_func)
 
 
@@ -70,16 +73,19 @@ def fps(_func=None, *, service='unknown'):
 			start_time = time.time()
 			ret_val = func(*args, **kwargs)
 			end_time = time.time()
+
 			config.message_queue.put(
 				{
 					'type': PeriodicService, 'name': service,
 					'start_time': start_time, 'end_time': end_time
 				}
 			)
+
 			return ret_val
 
 		return wrapper_func
 
 	if _func is None:
 		return wrapper
+
 	return wrapper(_func)

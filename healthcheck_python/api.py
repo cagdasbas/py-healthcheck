@@ -53,7 +53,7 @@ class HealthCheckApi(Process):
 
 	@staticmethod
 	def _index():
-		return f"Hello there! I'm py-healthcheck v{__version__}"
+		return f"Hello there! I'm healthcheck-python v{__version__}"
 
 	def _health(self):
 		"""
@@ -62,7 +62,8 @@ class HealthCheckApi(Process):
 		:return: overall status str(boolean).
 		:return: If verbose mode enabled, return a dict with details about every service
 		"""
-		is_verbose = 'v' in bottle.request.query.keys()
+		is_verbose = "v" in bottle.request.query.keys()
+
 		try:
 			status = self._status_queue.get(block=True, timeout=1)
 		except Empty:
