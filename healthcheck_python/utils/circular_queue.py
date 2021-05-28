@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import sys
 
 
 class CircularQueue:
@@ -51,4 +52,5 @@ class CircularQueue:
 		if self.first_full:
 			return self.k / sum(self.queue)
 
-		return (self.head - self.tail + 1) / sum(self.queue[self.tail:self.head + 1])
+		total_sum = sum(self.queue[self.tail:self.head + 1]) + sys.float_info.epsilon
+		return (self.head - self.tail + 1) / total_sum
