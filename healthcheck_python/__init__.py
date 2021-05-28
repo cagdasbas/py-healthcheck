@@ -13,8 +13,5 @@
 #  limitations under the License.
 
 from healthcheck_python.decorators import fps, periodic
-from healthcheck_python.utils.pipeline import start
 
 __all__ = ['fps', 'periodic']
-
-start()
