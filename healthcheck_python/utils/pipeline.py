@@ -16,18 +16,21 @@ import healthcheck_python.config as config
 
 
 def start():
-	if config.started:
+	"""
+	Create instances and start the healthcheck pipeline
+	"""
+	if config.STARTED:
 		return
 
 	from healthcheck_python.api import HealthCheckApi
 	from healthcheck_python.manager import HealthCheckManager
 	from healthcheck_python.updater import HealthCheckUpdater
 
-	api = HealthCheckApi(config.host, config.port, config.status_queue, daemon=True)
+	api = HealthCheckApi(config.HOST, config.PORT, config.status_queue, daemon=True)
 	updater = HealthCheckUpdater(config.process_queue, config.status_queue, daemon=True)
 	manager = HealthCheckManager(config.message_queue, config.process_queue, daemon=True)
 
 	api.start()
 	updater.start()
 	manager.start()
-	config.started = True
+	config.STARTED = True

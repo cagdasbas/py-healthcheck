@@ -20,7 +20,7 @@ def class_for_name(class_name: str):
 	:param class_name: CamelCase class name from healthcheck_python.service
 	:return: <class>
 	"""
-	m = importlib.import_module("healthcheck_python")
-	c = getattr(m, "service")
-	c = getattr(c, class_name)
-	return c
+	module_name = importlib.import_module("healthcheck_python")
+	submodule_name = getattr(module_name, "service")
+	class_ = getattr(submodule_name, class_name)
+	return class_

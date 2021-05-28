@@ -50,5 +50,5 @@ class CircularQueue:
 		"""
 		if self.first_full:
 			return self.k / sum(self.queue)
-		else:
-			return (self.head - self.tail + 1) / sum(self.queue[self.tail:self.head + 1])
+
+		return (self.head - self.tail + 1) / sum(self.queue[self.tail:self.head + 1])

@@ -15,14 +15,14 @@
 import os
 from multiprocessing import Queue
 
-started = False
-host = os.getenv("PY_HEALTH_CHECK_HOST", "0.0.0.0")
-port = os.getenv("PY_HEALTH_CHECK_PORT", "8080")
+STARTED = False
+HOST = os.getenv("PY_HEALTH_CHECK_HOST", "0.0.0.0")
+PORT = os.getenv("PY_HEALTH_CHECK_PORT", "8080")
 
-if isinstance(port, str) and port.isdecimal() and 1 < int(port) < 65535:
-	port = int(port)
+if isinstance(PORT, str) and PORT.isdecimal() and 1 < int(PORT) < 65535:
+	PORT = int(PORT)
 else:
-	port = 8080
+	PORT = 8080
 
 message_queue = Queue()
 process_queue = Queue(maxsize=1)
