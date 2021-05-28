@@ -11,7 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import functools
+import logging
 from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 
@@ -36,6 +37,7 @@ class HealthCheckApi(Process):
 		self.daemon = daemon
 
 		self._app = bottle.Bottle()
+		self._app.install(HealthCheckApi.logging)
 		self._app.queue = Queue()
 		self._app.nb_workers = cpu_count()
 
@@ -47,7 +49,7 @@ class HealthCheckApi(Process):
 
 	def run(self):
 		setproctitle(self.__class__.__name__)
-		bottle.run(self._app, host=self._host, port=self._port)
+		bottle.run(self._app, host=self._host, port=self._port, quiet=True)
 
 	@staticmethod
 	def _index():
@@ -70,3 +72,25 @@ class HealthCheckApi(Process):
 			return status
 
 		return {'status': status['status']}
+
+	@staticmethod
+	def logging(fn):
+		"""
+		Wrapper for send logs to logging module
+		"""
+
+		@functools.wraps(fn)
+		def log(*args, **kwargs):
+			actual_response = fn(*args, **kwargs)
+
+			logging.info(
+				"%s %s %s %s",
+				bottle.request.remote_addr,
+				bottle.request.method,
+				bottle.request.url,
+				bottle.response.status
+			)
+
+			return actual_response
+
+		return log
