@@ -36,7 +36,7 @@ class HealthCheckManager(mp.Process):
 		setproctitle(self.__class__.__name__)
 		while self.continue_running:
 			try:
-				message = self.message_queue.get(block=True, timeout=0.1)
+				message = self.message_queue.get()
 				if message is None:
 					break
 			except queue.Empty:
@@ -54,9 +54,8 @@ class HealthCheckManager(mp.Process):
 		functions start and end time and the timeout
 		"""
 		process_name = message['name']
-		if process_name in self.processes.keys():
-			service = self.processes[process_name]
-		else:
+		service = self.processes.get(process_name)
+		if service is None:
 			process_type = message['type']
 			service = process_type(process_name)
 

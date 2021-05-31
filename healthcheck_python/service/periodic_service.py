@@ -14,8 +14,8 @@
 
 import time
 
-from healthcheck_python.utils.circular_queue import CircularQueue
 from healthcheck_python.service.base_service import BaseService
+from healthcheck_python.utils.circular_queue import CircularQueue
 
 
 class PeriodicService(BaseService):
@@ -70,7 +70,8 @@ class PeriodicService(BaseService):
 			return
 
 		self._last_end = point['end_time']
-		if 'timeout' in point.keys():
+		timeout = point.get("timeout")
+		if timeout is not None:
 			self._timeout = point['timeout']
 		if point['start_time'] != 0:
 			self._last_start = point['start_time']

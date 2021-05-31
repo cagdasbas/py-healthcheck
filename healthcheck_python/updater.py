@@ -36,6 +36,7 @@ class HealthCheckUpdater(mp.Process):
 
 		self.continue_running = True
 		self._processes = {}
+		self._classes = {}
 
 	def run(self):
 		setproctitle(self.__class__.__name__)
@@ -55,8 +56,7 @@ class HealthCheckUpdater(mp.Process):
 	def __del__(self):
 		self.continue_running = False
 
-	@staticmethod
-	def parse_message(message) -> dict:
+	def parse_message(self, message) -> dict:
 		"""
 		Parse incoming struct to create own copy of process service
 		:param message: dict with pickled values. Each value has to be a instance of BaseService
@@ -64,7 +64,10 @@ class HealthCheckUpdater(mp.Process):
 		"""
 		processes = {}
 		for key, data in message.items():
-			service_class = class_for_name(data['class'])
+			service_class = self._classes.get(data['class'])
+			if service_class is None:
+				service_class = class_for_name(data['class'])
+				self._classes[data['class']] = service_class
 			data.pop('class')
 			new_service = service_class.parse_from_dict(data)
 			processes[key] = new_service
