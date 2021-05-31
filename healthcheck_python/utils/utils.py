@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import enum
 import importlib
 
 
@@ -24,3 +25,10 @@ def class_for_name(class_name: str):
 	submodule_name = getattr(module_name, "service")
 	class_ = getattr(submodule_name, class_name)
 	return class_
+
+
+class ServiceStatus(enum.Enum):
+	UNDEFINED = 0
+	READY = 1
+	DONE = 2
+	FAILED = 3

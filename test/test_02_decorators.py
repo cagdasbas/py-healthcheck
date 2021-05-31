@@ -18,6 +18,7 @@ import pytest
 
 import healthcheck_python
 from healthcheck_python import config
+from healthcheck_python.utils.utils import ServiceStatus
 
 
 @pytest.fixture(scope='module')
@@ -65,3 +66,17 @@ def test_fps(queue):
 	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
 	assert call_args['start_time'] != 0
+
+
+def test_mark_done(queue):
+	config.message_queue = queue
+
+	@healthcheck_python.periodic(service="service1")
+	@healthcheck_python.mark_done(service="service1")
+	def test_function():
+		x = 2 + 3
+
+	test_function()
+	call_args = queue.get(block=True, timeout=0.1)
+	assert call_args['name'] == "service1"
+	assert call_args['status'] == ServiceStatus.DONE

@@ -16,6 +16,7 @@ import time
 
 from healthcheck_python.service.base_service import BaseService
 from healthcheck_python.utils.circular_queue import CircularQueue
+from healthcheck_python.utils.utils import ServiceStatus
 
 
 class PeriodicService(BaseService):
@@ -44,6 +45,7 @@ class PeriodicService(BaseService):
 		"""
 		return {
 			'status': self._status,
+			'ready': self.global_status == ServiceStatus.READY,
 			'last_start': self._last_start, 'last_end': self._last_end, 'timeout': self._timeout,
 			'fps': self._fps
 		}
@@ -90,5 +92,8 @@ class PeriodicService(BaseService):
 
 		self._fps = self._queue.mean_nonzero()
 
-		self._status = current_time - self._last_end <= self._timeout
+		if self.global_status == ServiceStatus.DONE:
+			self._status = True
+		else:
+			self._status = current_time - self._last_end <= self._timeout
 		return self._status

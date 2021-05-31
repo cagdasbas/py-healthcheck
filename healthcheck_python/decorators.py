@@ -18,6 +18,7 @@ import time
 import healthcheck_python.config as config
 from healthcheck_python.service.periodic_service import PeriodicService
 from healthcheck_python.utils.pipeline import start
+from healthcheck_python.utils.utils import ServiceStatus
 
 
 def periodic(_func=None, *, service='unknown', calc_fps=False, timeout=5):
@@ -36,6 +37,8 @@ def periodic(_func=None, *, service='unknown', calc_fps=False, timeout=5):
 	def wrapper(func):
 		@functools.wraps(func)
 		def wrapper_func(*args, **kwargs):
+			for name, method in func.__dict__.items():
+				print(method)
 			start_time = time.time() if calc_fps else 0
 			ret_val = func(*args, **kwargs)
 			end_time = time.time()
@@ -78,6 +81,69 @@ def fps(_func=None, *, service='unknown'):
 				{
 					'type': PeriodicService, 'name': service,
 					'start_time': start_time, 'end_time': end_time
+				}
+			)
+
+			return ret_val
+
+		return wrapper_func
+
+	if _func is None:
+		return wrapper
+
+	return wrapper(_func)
+
+
+def mark_ready(_func=None, *, service='unknown'):
+	"""
+	Mark a service ready to serve
+	Also clears done flag
+	:param _func: Wrapped function
+	:param service: Service name
+	:return: original return values of _func()
+	"""
+	start()
+
+	def wrapper(func):
+		@functools.wraps(func)
+		def wrapper_func(*args, **kwargs):
+			ret_val = func(*args, **kwargs)
+
+			config.message_queue.put(
+				{
+					'name': service,
+					'status': ServiceStatus.READY
+				}
+			)
+
+			return ret_val
+
+		return wrapper_func
+
+	if _func is None:
+		return wrapper
+
+	return wrapper(_func)
+
+
+def mark_done(_func=None, *, service='unknown'):
+	"""
+	Mark a service done and make it successful indefinitely
+	:param _func: Wrapped function
+	:param service: Service name
+	:return: original return values of _func()
+	"""
+	start()
+
+	def wrapper(func):
+		@functools.wraps(func)
+		def wrapper_func(*args, **kwargs):
+			ret_val = func(*args, **kwargs)
+
+			config.message_queue.put(
+				{
+					'name': service,
+					'status': ServiceStatus.DONE
 				}
 			)
 

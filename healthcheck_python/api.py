@@ -56,15 +56,11 @@ class HealthCheckApi(Process):
 	def _index():
 		return f"Hello there! I'm healthcheck-python v{__version__}"
 
-	def _health(self):
+	def _get_status(self) -> dict:
 		"""
-		Health check path
-		/health
-		:return: overall status str(boolean).
-		:return: If verbose mode enabled, return a dict with details about every service
+		Get a single valid message from queue
+		:return: dict
 		"""
-		is_verbose = "v" in bottle.request.query.keys()
-
 		while True:
 			try:
 				status = self._status_queue.get(block=True, timeout=1)
@@ -75,10 +71,39 @@ class HealthCheckApi(Process):
 				status = {'status': False, 'services': {}}
 				break
 
-		if is_verbose:
-			return status
+		return status
 
-		return {'status': status['status']}
+	def _ready(self):
+		"""
+		Health check path
+		/health
+		:return: overall status str(boolean).
+		:return: If verbose mode enabled, return a dict with details about every service
+		"""
+		is_verbose = "v" in bottle.request.query.keys()
+
+		status_message = self._get_status()
+
+		if is_verbose:
+			return status_message
+
+		return {'status': status_message['ready']}
+
+	def _health(self):
+		"""
+		Health check path
+		/health
+		:return: overall status str(boolean).
+		:return: If verbose mode enabled, return a dict with details about every service
+		"""
+		is_verbose = "v" in bottle.request.query.keys()
+
+		status_message = self._get_status()
+
+		if is_verbose:
+			return status_message
+
+		return {'status': status_message['status']}
 
 	@staticmethod
 	def logging(fn):

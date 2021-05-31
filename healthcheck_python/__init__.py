@@ -12,6 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from healthcheck_python.decorators import fps, periodic
+from healthcheck_python.decorators import fps, periodic, mark_ready, mark_done
 
-__all__ = ['fps', 'periodic']
+__all__ = ['fps', 'periodic', 'mark_ready', 'mark_done']

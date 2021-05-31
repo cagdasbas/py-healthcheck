@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from healthcheck_python.utils.utils import ServiceStatus
+
 
 class BaseService:
 	"""
@@ -20,6 +22,8 @@ class BaseService:
 
 	def __init__(self, name):
 		self.name = name
+
+		self.global_status = ServiceStatus.UNDEFINED
 
 	def json(self) -> dict:
 		"""
@@ -49,6 +53,30 @@ class BaseService:
 		:param point: dict, new function call service
 		"""
 		raise NotImplementedError()
+
+	def mark_ready(self) -> None:
+		"""
+		Mark the service ready
+		It means this service is ready to serve
+		Clears done flag
+		:return:
+		"""
+		self.global_status = ServiceStatus.READY
+
+	def mark_done(self) -> None:
+		"""
+		Mark the service done
+		It means this service is always up
+		:return:
+		"""
+		self.global_status = ServiceStatus.DONE
+
+	def is_ready(self) -> bool:
+		"""
+		Return ready status
+		:return:
+		"""
+		return self.global_status == ServiceStatus.READY
 
 	def is_healthy(self, current_time: float = None) -> bool:
 		"""

@@ -17,6 +17,8 @@ import time
 
 from setproctitle import setproctitle
 
+from healthcheck_python.utils.utils import ServiceStatus
+
 
 class HealthCheckManager(mp.Process):
 	"""
@@ -48,19 +50,29 @@ class HealthCheckManager(mp.Process):
 	def __del__(self):
 		self.continue_running = False
 
-	def _process_message(self, message):
+	def _process_message(self, message: dict):
 		"""
 		Process a single decorator message and put it into update queue
 		:param message: A decorator message includes service name,
 		functions start and end time and the timeout
 		"""
 		process_name = message['name']
+		service_status = message.get("status", ServiceStatus.UNDEFINED)
+
 		service = self.processes.get(process_name)
-		if service is None:
+		if service is None and service_status == ServiceStatus.UNDEFINED:
 			process_type = message['type']
 			service = process_type(process_name)
+		else:
+			return
 
-		service.add_new_point(message)
+		if service_status == ServiceStatus.READY:
+			service.mark_ready()
+		elif service_status == ServiceStatus.DONE:
+			service.mark_done()
+		elif service_status == ServiceStatus.UNDEFINED:
+			service.add_new_point(message)
+
 		self.processes[process_name] = service
 
 		self.process_queue.put((

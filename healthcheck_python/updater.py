@@ -84,15 +84,18 @@ class HealthCheckUpdater(mp.Process):
 		"""
 		call_time = time.time()
 		status = True
+		ready = True
 		for _, service in self._processes.items():
 			service_status = service.is_healthy(call_time)
-			if not service_status:
-				status = False
+			ready_status = service.is_ready()
+			status &= service_status
+			ready &= ready_status
 
 		self._status_queue.put((
 			time.time(),
 			{
 				'status': status,
+				'ready': ready,
 				'services': {key: service.json() for key, service in self._processes.items()}
 			}
 		))
