@@ -13,6 +13,7 @@
 #  limitations under the License.
 import multiprocessing as mp
 import queue
+import time
 
 from setproctitle import setproctitle
 
@@ -36,7 +37,7 @@ class HealthCheckManager(mp.Process):
 		setproctitle(self.__class__.__name__)
 		while self.continue_running:
 			try:
-				message = self.message_queue.get()
+				message = self.message_queue.get(block=True, timeout=0.1)
 				if message is None:
 					break
 			except queue.Empty:
@@ -62,9 +63,7 @@ class HealthCheckManager(mp.Process):
 		service.add_new_point(message)
 		self.processes[process_name] = service
 
-		while not self.process_queue.empty():
-			self.process_queue.get()
-
-		self.process_queue.put(
+		self.process_queue.put((
+			time.time(),
 			{key: value.serialize() for key, value in self.processes.items()}
-		)
+		))

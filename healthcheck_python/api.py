@@ -13,6 +13,7 @@
 #  limitations under the License.
 import functools
 import logging
+import time
 from multiprocessing import Process, Queue, cpu_count
 from queue import Empty
 
@@ -64,10 +65,15 @@ class HealthCheckApi(Process):
 		"""
 		is_verbose = "v" in bottle.request.query.keys()
 
-		try:
-			status = self._status_queue.get(block=True, timeout=1)
-		except Empty:
-			status = {'status': False, 'services': {}}
+		while True:
+			try:
+				status = self._status_queue.get(block=True, timeout=1)
+				if time.time() - status[0] <= 0.5:
+					status = status[1]
+					break
+			except Empty:
+				status = {'status': False, 'services': {}}
+				break
 
 		if is_verbose:
 			return status

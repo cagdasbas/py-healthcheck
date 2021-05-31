@@ -42,14 +42,17 @@ class HealthCheckUpdater(mp.Process):
 		setproctitle(self.__class__.__name__)
 
 		while self.continue_running:
-			try:
-				message = self._process_queue.get(block=True, timeout=0.1)
+			while True:
+				try:
+					message = self._process_queue.get(block=True, timeout=0.1)
+				except queue.Empty:
+					break
 				if message is None:
 					break
 
-				self._processes = self.parse_message(message)
-			except queue.Empty:
-				pass
+				if time.time() - message[0] <= 0.5:
+					self._processes = self.parse_message(message[1])
+					break
 
 			self._check_health()
 
@@ -86,12 +89,10 @@ class HealthCheckUpdater(mp.Process):
 			if not service_status:
 				status = False
 
-		while not self._status_queue.empty():
-			self._status_queue.get()
-
-		self._status_queue.put(
+		self._status_queue.put((
+			time.time(),
 			{
 				'status': status,
 				'services': {key: service.json() for key, service in self._processes.items()}
 			}
-		)
+		))

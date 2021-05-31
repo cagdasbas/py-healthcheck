@@ -25,5 +25,5 @@ else:
 	PORT = 8080
 
 message_queue = Queue()
-process_queue = Queue(maxsize=1)
-status_queue = Queue(maxsize=1)
+process_queue = Queue()
+status_queue = Queue()
