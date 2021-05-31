@@ -1,4 +1,10 @@
 ### A Health Check API Library for Multiprocessing Python Apps
+![passing](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cagdasbas/07e196561fb7496e619da3ef402209a6/raw/passing.json)
+![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cagdasbas/07e196561fb7496e619da3ef402209a6/raw/coverage.json)
+![version](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cagdasbas/07e196561fb7496e619da3ef402209a6/raw/version.json)
+[![license](https://img.shields.io/badge/license-Apache%202-blue)](LICENSE)
+
+
 This library adds a health check REST API to your multiprocessing apps. 
 You can add decorators to your periodic running functions and library will track 
 the function calls. This library supports ```multiprocessing``` threads.
