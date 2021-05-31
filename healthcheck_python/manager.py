@@ -62,6 +62,9 @@ class HealthCheckManager(mp.Process):
 		service.add_new_point(message)
 		self.processes[process_name] = service
 
+		while not self.process_queue.empty():
+			self.process_queue.get()
+
 		self.process_queue.put(
 			{key: value.serialize() for key, value in self.processes.items()}
 		)
