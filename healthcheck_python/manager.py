@@ -11,13 +11,14 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import logging
 import multiprocessing as mp
 import queue
 import time
 
 from setproctitle import setproctitle
 
-from healthcheck_python.utils.utils import ServiceStatus
+from healthcheck_python.utils.utils import ServiceOperation
 
 
 class HealthCheckManager(mp.Process):
@@ -57,23 +58,30 @@ class HealthCheckManager(mp.Process):
 		functions start and end time and the timeout
 		"""
 		process_name = message['name']
-		service_status = message.get("status", ServiceStatus.UNDEFINED)
-
-		service = self.processes.get(process_name)
-		if service is None and service_status == ServiceStatus.UNDEFINED:
-			process_type = message['type']
-			service = process_type(process_name)
-		else:
+		operation = message.get("op", ServiceOperation.UNDEFINED)
+		if operation == ServiceOperation.UNDEFINED:
 			return
 
-		if service_status == ServiceStatus.READY:
-			service.mark_ready()
-		elif service_status == ServiceStatus.DONE:
-			service.mark_done()
-		elif service_status == ServiceStatus.UNDEFINED:
-			service.add_new_point(message)
+		if operation == ServiceOperation.CREATE:
+			process_type = message['type']
+			timeout = message['timeout']
+			service = process_type(process_name, timeout)
+			self.processes[process_name] = service
+			return
 
-		self.processes[process_name] = service
+		service = self.processes.get(process_name)
+		if service is None:
+			logging.error("service %s is not initialized, initialize it first", process_name)
+			return
+
+		if operation == ServiceOperation.ADD_HEALTH_POINT:
+			service.add_health_point(message)
+		elif operation == ServiceOperation.ADD_FPS_POINT:
+			service.add_fps_point(message)
+		elif operation == ServiceOperation.MARK_READY:
+			service.mark_ready()
+		elif operation == ServiceOperation.MARK_DONE:
+			service.mark_done()
 
 		self.process_queue.put((
 			time.time(),

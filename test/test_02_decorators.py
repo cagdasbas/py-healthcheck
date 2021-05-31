@@ -18,15 +18,20 @@ import pytest
 
 import healthcheck_python
 from healthcheck_python import config
-from healthcheck_python.utils.utils import ServiceStatus
+from healthcheck_python.utils.utils import ServiceOperation
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def queue():
 	return mp.Queue()
 
 
-def test_periodic_wo_fps(queue):
+@healthcheck_python.periodic(timeout=3)
+class TestClass:
+	pass
+
+
+def test_periodic_create(queue):
 	config.message_queue = queue
 
 	@healthcheck_python.periodic(service="service1", timeout=1)
@@ -36,47 +41,72 @@ def test_periodic_wo_fps(queue):
 	test_function()
 	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
-	assert call_args['start_time'] == 0
+	assert call_args['op'] == ServiceOperation.CREATE
 	assert call_args['timeout'] == 1
-	assert call_args['name'] == "service1"
+
+	TestClass()
+	call_args = queue.get(block=True, timeout=0.1)
+	assert call_args['name'] == "TestClass"
+	assert call_args['op'] == ServiceOperation.CREATE
+	assert call_args['timeout'] == 3
 
 
-def test_periodic_fps(queue):
+def test_periodic_add_health(queue):
 	config.message_queue = queue
 
-	@healthcheck_python.periodic(service="service1", calc_fps=True, timeout=1)
+	@healthcheck_python.periodic(service="service1", timeout=1)
+	@healthcheck_python.healthy(service="service1")
 	def test_function():
 		x = 2 + 3
 
 	test_function()
 	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
-	assert call_args['start_time'] != 0
-	assert call_args['timeout'] == 1
+	assert call_args['op'] == ServiceOperation.ADD_HEALTH_POINT
+	assert call_args['end_time'] != 0
 
 
 def test_fps(queue):
 	config.message_queue = queue
 
 	@healthcheck_python.fps(service="service1")
+	@healthcheck_python.periodic(service="service1", timeout=1)
 	def test_function():
 		x = 2 + 3
 
 	test_function()
+	queue.get(block=True, timeout=0.1)
 	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
 	assert call_args['start_time'] != 0
+	assert call_args['op'] == ServiceOperation.ADD_FPS_POINT
 
 
 def test_mark_done(queue):
 	config.message_queue = queue
 
-	@healthcheck_python.periodic(service="service1")
 	@healthcheck_python.mark_done(service="service1")
+	@healthcheck_python.periodic(service="service1")
 	def test_function():
 		x = 2 + 3
 
 	test_function()
+	queue.get(block=True, timeout=0.1)
 	call_args = queue.get(block=True, timeout=0.1)
 	assert call_args['name'] == "service1"
-	assert call_args['status'] == ServiceStatus.DONE
+	assert call_args['op'] == ServiceOperation.MARK_DONE
+
+
+def test_mark_ready(queue):
+	config.message_queue = queue
+
+	@healthcheck_python.mark_ready(service="service1")
+	@healthcheck_python.periodic(service="service1")
+	def test_function():
+		x = 2 + 3
+
+	test_function()
+	queue.get(block=True, timeout=0.1)
+	call_args = queue.get(block=True, timeout=0.1)
+	assert call_args['name'] == "service1"
+	assert call_args['op'] == ServiceOperation.MARK_READY

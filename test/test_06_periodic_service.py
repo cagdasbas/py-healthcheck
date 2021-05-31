@@ -5,8 +5,8 @@ from healthcheck_python.service import PeriodicService
 
 @pytest.fixture(scope="function")
 def service():
-	service = PeriodicService("service1")
-	service.add_new_point({'start_time': 1, 'end_time': 2, 'timeout': 3})
+	service = PeriodicService("service1", timeout=3)
+	service.add_fps_point({'start_time': 1, 'end_time': 2})
 	return service
 
 

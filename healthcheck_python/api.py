@@ -75,9 +75,9 @@ class HealthCheckApi(Process):
 
 	def _ready(self):
 		"""
-		Health check path
+		Readiness check path
 		/health
-		:return: overall status str(boolean).
+		:return: overall readiness str(boolean).
 		:return: If verbose mode enabled, return a dict with details about every service
 		"""
 		is_verbose = "v" in bottle.request.query.keys()
@@ -87,7 +87,7 @@ class HealthCheckApi(Process):
 		if is_verbose:
 			return status_message
 
-		return {'status': status_message['ready']}
+		return {'ready': status_message['ready']}
 
 	def _health(self):
 		"""
@@ -106,14 +106,14 @@ class HealthCheckApi(Process):
 		return {'status': status_message['status']}
 
 	@staticmethod
-	def logging(fn):
+	def logging(func):
 		"""
 		Wrapper for send logs to logging module
 		"""
 
-		@functools.wraps(fn)
+		@functools.wraps(func)
 		def log(*args, **kwargs):
-			actual_response = fn(*args, **kwargs)
+			actual_response = func(*args, **kwargs)
 
 			logging.info(
 				"%s %s %s %s",

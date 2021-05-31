@@ -25,13 +25,12 @@ class PeriodicService(BaseService):
 	This service has to be updated periodically, otherwise it is marked as failed
 	"""
 
-	def __init__(self, name, timeout=10):
+	def __init__(self, name, timeout=999):
 		super().__init__(name)
 		self._timeout = timeout
 
 		self._last_start = None
 		self._last_end = None
-		self._timeout = 999
 
 		self._status = False
 
@@ -63,7 +62,7 @@ class PeriodicService(BaseService):
 		new_service._queue = new_queue
 		return new_service
 
-	def add_new_point(self, point):
+	def add_health_point(self, point):
 		"""
 		Add new function call
 		:param point: dict, new function call service
@@ -72,12 +71,18 @@ class PeriodicService(BaseService):
 			return
 
 		self._last_end = point['end_time']
-		timeout = point.get("timeout")
-		if timeout is not None:
-			self._timeout = point['timeout']
-		if point['start_time'] != 0:
-			self._last_start = point['start_time']
-			self._queue.enqueue(self._last_end - self._last_start)
+
+	def add_fps_point(self, point):
+		"""
+		Add new function call
+		:param point: dict, new function call service
+		"""
+		if point is None:
+			return
+
+		self._last_end = point['end_time']
+		self._last_start = point['start_time']
+		self._queue.enqueue(self._last_end - self._last_start)
 
 	def is_healthy(self, current_time=None):
 		"""

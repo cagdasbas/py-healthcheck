@@ -27,7 +27,22 @@ def class_for_name(class_name: str):
 	return class_
 
 
+class ServiceOperation(enum.Enum):
+	"""
+	Decorator sends a ServiceOperation to manager to perform a different type of operation
+	"""
+	UNDEFINED = 0
+	CREATE = 1
+	ADD_HEALTH_POINT = 2
+	ADD_FPS_POINT = 3
+	MARK_READY = 4
+	MARK_DONE = 5
+
+
 class ServiceStatus(enum.Enum):
+	"""
+	Global status of a service
+	"""
 	UNDEFINED = 0
 	READY = 1
 	DONE = 2

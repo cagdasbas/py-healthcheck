@@ -47,7 +47,14 @@ class BaseService:
 		"""
 		raise NotImplementedError()
 
-	def add_new_point(self, point: dict) -> None:
+	def add_health_point(self, point: dict) -> None:
+		"""
+		Add new function call
+		:param point: dict, new function call service
+		"""
+		raise NotImplementedError()
+
+	def add_fps_point(self, point: dict) -> None:
 		"""
 		Add new function call
 		:param point: dict, new function call service

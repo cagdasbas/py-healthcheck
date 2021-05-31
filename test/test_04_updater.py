@@ -45,7 +45,7 @@ def test_parse(updater_object):
 
 def test_success(output_queue, updater_object):
 	service1 = PeriodicService("service1")
-	service1.add_new_point({'start_time': 1, 'end_time': 2, 'timeout': 3})
+	service1.add_health_point({'start_time': 1, 'end_time': 2, 'timeout': 3})
 	updater_object._processes = {'test_service': service1}
 
 	updater_object._check_health()
@@ -53,7 +53,7 @@ def test_success(output_queue, updater_object):
 	assert not message[1]['status']
 
 	service2 = PeriodicService("service2")
-	service2.add_new_point({'start_time': 1, 'end_time': time.time(), 'timeout': 10000})
+	service2.add_health_point({'start_time': 1, 'end_time': time.time(), 'timeout': 10000})
 	updater_object._processes = {'test_service': service2}
 
 	updater_object._check_health()
