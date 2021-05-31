@@ -35,9 +35,9 @@ def updater_object(input_queue, output_queue):
 	return HealthCheckUpdater(input_queue, output_queue)
 
 
-def test_parse():
+def test_parse(updater_object):
 	service1 = PeriodicService("service1")
-	processes = HealthCheckUpdater.parse_message({'service1_key': service1.serialize()})
+	processes = updater_object.parse_message({'service1_key': service1.serialize()})
 	assert "service1_key" in processes.keys()
 	assert isinstance(processes['service1_key'], PeriodicService)
 	assert processes['service1_key'].name == "service1"
