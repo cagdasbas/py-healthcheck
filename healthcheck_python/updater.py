@@ -47,7 +47,7 @@ class HealthCheckUpdater(mp.Process):
 				if message is None:
 					break
 
-				self._processes = HealthCheckUpdater.parse_message(message)
+				self._processes = self.parse_message(message)
 			except queue.Empty:
 				pass
 
