@@ -50,7 +50,7 @@ def test_success(output_queue, updater_object):
 
 	updater_object._check_health()
 	message = output_queue.get(block=True, timeout=0.1)
-	assert not message['status']
+	assert not message[1]['status']
 
 	service2 = PeriodicService("service2")
 	service2.add_new_point({'start_time': 1, 'end_time': time.time(), 'timeout': 10000})
@@ -58,4 +58,4 @@ def test_success(output_queue, updater_object):
 
 	updater_object._check_health()
 	message = output_queue.get(block=True, timeout=0.1)
-	assert message['status']
+	assert message[1]['status']

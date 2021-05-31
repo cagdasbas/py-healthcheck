@@ -40,7 +40,7 @@ def test_failed_response(api_object):
 
 
 def test_success(queue, api_object):
-	queue.put({'status': True, 'services': {}})
+	queue.put((time.time() + 5, {'status': True, 'services': {}}))
 	time.sleep(0.1)
 	response = api_object._health()
 	assert response == {'status': True}

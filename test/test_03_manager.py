@@ -39,4 +39,4 @@ def test_success(output_queue, manager_object):
 		{'type': PeriodicService, 'name': 'test_service', 'start_time': 1, 'end_time': 2, 'timeout': 3}
 	)
 	message = output_queue.get(block=True, timeout=0.1)
-	assert message['test_service']['_last_end'] == 2
+	assert message[1]['test_service']['_last_end'] == 2
