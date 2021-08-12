@@ -91,6 +91,12 @@ class HealthCheckUpdater(mp.Process):
 			status &= service_status
 			ready &= ready_status
 
+		while True:
+			try:
+				self._status_queue.get_nowait()
+			except queue.Empty:
+				break
+
 		self._status_queue.put((
 			time.time(),
 			{
